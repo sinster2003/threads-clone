@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { UserPage, PostPage } from "../components";
-import App from "../src/App";
+import { UserPage, PostPage } from "../pages";
+import App from "../App";
 
 const routes = createBrowserRouter([
     {
