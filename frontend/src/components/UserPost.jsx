@@ -14,10 +14,12 @@ import {
 } from "@chakra-ui/react";
 import { Actions } from "./";
 import { BsThreeDots } from "react-icons/bs";
+import { useState } from "react";
 
 const UserPost = ({ image, replies, text, likes }) => {
   const toast = useToast();
   const { colorMode } = useColorMode();
+  const [isLiked, setIsLiked] = useState(false);
 
   const handleCopyPost = (link) => {
     console.log(link);
@@ -38,10 +40,10 @@ const UserPost = ({ image, replies, text, likes }) => {
         <Flex
           flexDirection="column"
           alignItems="center"
-          w={{ base: 12, sm: 20 }}
+          minW={{ base: 12, sm: 20 }}
         >
           <Avatar name="Mark Zuckerberg" size="md" src="zuck-avatar.png" />
-          <Box h="full" w={0.5} bg="gray.500" my={6}></Box>
+          <Box h="full" w={0.001} bg="gray.500" my={6}></Box>
           <Flex
             flexDirection="row"
             flexWrap="wrap"
@@ -104,13 +106,13 @@ const UserPost = ({ image, replies, text, likes }) => {
             >
               {text}
             </Text>
-            {image && <Image src={image} w={550} borderRadius={4} />}
+            {image && <Image src={image} borderRadius={4} />}
           </Flex>
-          <Actions />
+          <Actions isLiked={isLiked} setIsLiked={setIsLiked}/>
           <Flex mb={8} gap={3} alignItems="center">
             <Text color="gray.light">{replies} replies</Text>
             <Box w={1} h={1} bg="gray.light" borderRadius="full"></Box>
-            <Text color="gray.light">{likes} likes</Text>
+            <Text color="gray.light">{likes + (isLiked ? 1 : 0)} likes</Text>
           </Flex>
         </Flex>
       </Flex>

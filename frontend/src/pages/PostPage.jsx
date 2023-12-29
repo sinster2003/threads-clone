@@ -1,6 +1,8 @@
+import { PostDetails } from "../components";
+
 const PostPage = () => {
   return (
-    <div>PostPage</div>
+    <PostDetails/>
   )
 }
 

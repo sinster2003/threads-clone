@@ -8,7 +8,7 @@ const Navbar = () => {
   return (
     <Flex mt={10} justifyContent="center" alignItems="center">
       <Image 
-        src={colorMode === "dark" ? "light-logo.svg" : "dark-logo.svg"} 
+        src={colorMode === "dark" ? "/light-logo.svg" : "/dark-logo.svg"} 
         alt="logo"
         onClick={toggleColorMode}
         cursor="pointer"

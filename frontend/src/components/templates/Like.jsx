@@ -1,8 +1,4 @@
-import { useState } from "react";
-
-const Like = () => {
-
-    const [isLiked, setIsLiked] = useState(false);
+const Like = ({isLiked, setIsLiked}) => {
 
   return (
     <svg

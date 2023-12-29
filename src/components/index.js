@@ -1,9 +1,0 @@
-export {default as Layout} from "./Layout";
-export {default as Navbar} from "./Navbar";
-export {default as UserHeader} from "./UserHeader";
-export {default as UserPost} from "./UserPost";
-export {default as Actions} from "./Actions";
-export {default as Like} from "./Like";
-export {default as Comment} from "./Comment";
-export {default as Repost} from "./Repost";
-export {default as Share} from "./Share";

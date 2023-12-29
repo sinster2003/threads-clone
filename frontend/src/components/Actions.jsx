@@ -1,11 +1,11 @@
 import { Flex } from "@chakra-ui/react";
 import { Like, Comment, Repost, Share } from "./";
 
-const Actions = () => {
+const Actions = ({isLiked, setIsLiked}) => {
 
   return (
     <Flex gap={4} pb={2} onClick={(e) => e.preventDefault()}>
-      <Like/>
+      <Like isLiked={isLiked} setIsLiked={setIsLiked}/>
       <Comment/>
       <Repost/>
       <Share/>

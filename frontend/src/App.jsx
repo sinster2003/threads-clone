@@ -4,11 +4,7 @@ import { Layout } from "./components";
 
 const App = () => {
   return (
-    <Container maxW={{
-      base: "sm",
-      sm: "lg",
-      md: "2xl"
-    }}>
+    <Container>
       <Layout>
         <Outlet/>
       </Layout>
