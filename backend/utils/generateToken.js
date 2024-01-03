@@ -12,8 +12,6 @@ const generateToken = (userId, res) => {
         maxAge: 5 * 24 * 60 * 60 * 1000,
         sameSite: "Strict"
     });
-
-    return token;
 }
 
 module.exports = generateToken;

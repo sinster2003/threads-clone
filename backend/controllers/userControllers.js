@@ -1,102 +1,150 @@
 const User = require("../models/users");
 const bcrypt = require("bcrypt");
 const generateToken = require("../utils/generateToken");
+const jwt = require("jsonwebtoken");
+const { signupObject, loginObject } = require("../utils/types/zod");
 
 const signupUser = async (req, res) => {
-  try {
-    const { name, email, username, password } = req.body;
+  const { name, email, username, password } = req.body;
 
-    const isExistingUser = await User.findOne({
-      $or: [{ email }, { username }],
+  /* input validation */
+  signupObject.parse({
+    name,
+    username,
+    email,
+    password,
+  });
+
+  const isExistingUser = await User.findOne({
+    $or: [{ email }, { username }],
+  });
+
+  if (isExistingUser) {
+    return res
+      .status(400)
+      .json({ message: "User already exists! Please Log in" });
+  }
+
+  const saltRounds = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+  const user = new User({
+    name,
+    username,
+    email,
+    password: hashedPassword,
+  });
+
+  /* save user in database */
+
+  await user.save();
+
+  if (user) {
+    /* generate jwt token */
+    generateToken(user._id, res);
+
+    return res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      username: user.username,
+      email: user.email,
     });
-
-    if (isExistingUser) {
-      return res
-        .status(400)
-        .json({ message: "User already exists! Please Log in" });
-    }
-
-    const saltRounds = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-    const user = new User({
-      name,
-      username,
-      email,
-      password: hashedPassword,
-    });
-
-    /* save user in database */
-
-    await user.save();
-
-    if(user) {
-
-        /* generate jwt token */
-        generateToken(user._id, res);
-
-        return res.status(201).json({
-            _id: user._id,
-            name: user.name,
-            username: user.username,
-            email: user.email
-        });
-    }
-    else {
-        return res.status(400).json({error: "Invalid user credentials!"})
-    }
-  } 
-  catch (error) {
-    console.log(error);
-    res.status(500).json({ error: error.message });
+  } else {
+    return res.status(400).json({ error: "Invalid user credentials!" });
   }
 };
 
 const loginUser = async (req, res) => {
-    try {
-      const { username, password } = req.body;
-  
-      const isExistingUser = await User.findOne({username});
+  const { username, password } = req.body;
 
-      const isPasswordEqual = await bcrypt.compare(password, isExistingUser?.password || "");
-        
-      if (!isExistingUser || !isPasswordEqual) {
-        return res
-          .status(404)
-          .json({ message: "Invalid username or password!!" });
-      }
-  
-      /* generate jwt token */
-      generateToken(isExistingUser._id, res);
-  
-      return res.status(200).json({
-          _id: isExistingUser._id,
-          name: isExistingUser.name,
-          username: isExistingUser.username,
-          email: isExistingUser.email
-      });
-    } 
-    catch (error) {
-      console.log(error);
-      res.status(500).json({ error: error.message });
-    }
-  };
+  /* input validation */
+  loginObject.parse({
+    username,
+    password,
+  });
+
+  const isExistingUser = await User.findOne({ username });
+
+  const isPasswordEqual = await bcrypt.compare(
+    password,
+    isExistingUser?.password || ""
+  );
+
+  if (!isExistingUser || !isPasswordEqual) {
+    return res.status(404).json({ message: "Invalid username or password!!" });
+  }
+
+  /* generate jwt token */
+  generateToken(isExistingUser._id, res);
+
+  return res.status(200).json({
+    _id: isExistingUser._id,
+    name: isExistingUser.name,
+    username: isExistingUser.username,
+    email: isExistingUser.email,
+  });
+};
 
 const logoutUser = (req, res) => {
-    try{
-        res.cookie("jwt", "", {
-            maxAge: 1
-        })
-        res.status(200).json({message: "User logged out successfully!!"});
-    }
-    catch(error) {
-        console.log(error);
-        res.status(500).json({ error: error.message });
-    }
-}
+  res.cookie("jwt", "", {
+    maxAge: 1,
+  });
+  res.status(200).json({ message: "User logged out successfully!!" });
+};
+
+const followUnfollowUser = async (req, res) => {
+  const id = req.params.id; // user to be followed
+
+  const userToBeFollowed = await User.findById(id);
+
+  const userWhoFollows = req.user; // user who follows
+
+  if (!userToBeFollowed || !userWhoFollows) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  if (userWhoFollows._id.toString() === id) {
+    return res
+      .status(400)
+      .json({ message: "You cannot follow or unfollow yourself" });
+  }
+
+  const isFollowing = userToBeFollowed.followers.includes(userWhoFollows._id);
+
+  if (isFollowing) {
+    
+    // unfollow user
+    await User.findByIdAndUpdate(userWhoFollows._id.toString(), {
+      $pull: { following: id },
+    }); // user who follows
+
+    await User.findByIdAndUpdate(id, {
+      $pull: { followers: userWhoFollows._id.toString() },
+    }); // followed user
+
+    res
+      .status(200)
+      .json({ message: `You have unfollowed ${userToBeFollowed.username}` });
+  } else {
+
+    // follow user
+    await User.findByIdAndUpdate(userWhoFollows._id.toString(), {
+      $push: { following: id },
+    });
+
+    await User.findByIdAndUpdate(id, {
+      $push: { followers: userWhoFollows._id.toString() },
+    });
+
+    res
+      .status(200)
+      .json({ message: `You have followed ${userToBeFollowed.username}` });
+  }
+};
 
 module.exports = {
   signupUser,
   loginUser,
-  logoutUser
+  logoutUser,
+  followUnfollowUser,
 };
