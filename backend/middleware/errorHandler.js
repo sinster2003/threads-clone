@@ -16,7 +16,10 @@ const errorHandler = (error, req, res, next) => {
     else if(error.name === "ZodError") {
         return res.status(400).json({error: error.issues});
     }
-    next();
+
+    else {
+        return res.status(500).json({error: "Something Went Wrong"});
+    }
 }
 
 module.exports = errorHandler;

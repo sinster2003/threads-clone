@@ -142,9 +142,58 @@ const followUnfollowUser = async (req, res) => {
   }
 };
 
+const updateUser = async (req,res) => {
+
+  const userTobeUpdated = req.user;
+  const { name, username, email, password, bio, profilePic } = req.body;
+
+  const userId = userTobeUpdated?._id.toString();
+
+  if(req.params.id !== userId) {
+    return res.status(404).json({message: "You cannot update other's profile"});
+  }
+
+  const user = await User.findById(userId);
+
+  if (!user) {
+    return res.status(404).json({message: "User not found"});
+  }
+
+  if(password) {
+    const saltRounds = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    user.password = hashedPassword;
+  }  
+
+  user.name = name || user.name;
+  user.username = username || user.username;
+  user.email = email || user.email;
+  user.profilePic = profilePic || user.profilePic;
+  user.bio = bio || user.bio;
+
+  await user.save();
+
+  res.status(200).json({message: "User profile updated successfully"});
+}
+
+const getUserProfile = async (req,res) => {
+
+  const { username } = req.params;
+
+  const getUser = await User.findOne({username}).select("-password").select("-updatedAt");
+
+  if(!getUser) {
+    return res.status(404).json({message: "User not found"});
+  }
+
+  res.status(200).json(getUser);
+}
+
 module.exports = {
   signupUser,
   loginUser,
   logoutUser,
   followUnfollowUser,
+  updateUser,
+  getUserProfile
 };
