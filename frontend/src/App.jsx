@@ -4,7 +4,11 @@ import { Layout } from "./components";
 
 const App = () => {
   return (
-    <Container>
+    <Container minH="100vh" maxW={{
+      base: "md",
+      sm: "lg",
+      lg: "xl",
+    }} display="flex" flexDirection="column" justifyContent="space-around">
       <Layout>
         <Outlet/>
       </Layout>
