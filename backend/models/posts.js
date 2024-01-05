@@ -7,7 +7,7 @@ const postSchema = new mongoose.Schema({
         required: true
     },
     text: {
-        utype: String,
+        type: String,
         maxLength: 500,
         required: true
     },
@@ -15,8 +15,8 @@ const postSchema = new mongoose.Schema({
         type: String
     },
     likes: {
-        type: Number,
-        default: 0
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "User"
     },
     replies: [
         {

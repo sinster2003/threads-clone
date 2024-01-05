@@ -1,5 +1,6 @@
 const errorHandler = (error, req, res, next) => {
     console.log(error.name);
+    console.log(error);
 
     if(error.name === "CastError") {
         return res.status(400).json({error: "Malformatted Id"});
@@ -14,7 +15,7 @@ const errorHandler = (error, req, res, next) => {
     }
 
     else if(error.name === "ZodError") {
-        return res.status(400).json({error: error.issues});
+        return res.status(400).json({error: `Error in ${error.issues[0].path} : ${error.issues[0].message}`});
     }
 
     else {
