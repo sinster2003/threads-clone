@@ -1,5 +1,6 @@
 const express = require("express");
 require("express-async-errors");
+const cors = require("cors");
 const connectDb = require("./db/connectDb");
 const cookieParser = require("cookie-parser");
 const userRouter = require("./routes/userRoutes");
@@ -15,6 +16,7 @@ const app = express();
 app.use(express.json()); // to parse json to js in the req.body
 app.use(express.urlencoded({extended: true})); // to parse form data into js
 app.use(cookieParser()); // extract cookie data from the http requests
+app.use(cors());
 
 /* routes */
 app.use("/api/users", userRouter);

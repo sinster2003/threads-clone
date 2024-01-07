@@ -1,6 +1,6 @@
 import { Box, FormControl, FormLabel, Input, useColorModeValue } from '@chakra-ui/react'
 
-const AuthInput = ({label, type, width}) => {
+const AuthInput = ({label, type, width, register}) => {
   return (
     <Box>
         <FormControl isRequired>
@@ -10,6 +10,7 @@ const AuthInput = ({label, type, width}) => {
             borderColor={useColorModeValue("gray.400")}
             variant={useColorModeValue("outline", "filled")}
             focusBorderColor={useColorModeValue("gray.600", "teal.400")}
+            {...register(label)}
         />
         </FormControl>
     </Box>

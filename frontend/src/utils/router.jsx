@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import { UserPage, PostPage, HomePage, Signup } from "../pages";
 import App from "../App";
 import LoginPage from "../pages/LoginPage";
@@ -13,11 +13,11 @@ const routes = createBrowserRouter([
                 element: <HomePage/>
             },
             {
-                path: "signup",
+                path: "/signup",
                 element: <Signup/>
             },
             {
-                path: "login",
+                path: "/login",
                 element: <LoginPage/>
             },
             {
