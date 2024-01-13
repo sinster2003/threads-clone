@@ -15,3 +15,4 @@ export {default as AuthHeader} from "../components/authComponents/AuthHeader";
 export {default as AuthAsk} from "../components/authComponents/AuthAsk";
 export {default as AuthInput} from "../components/authComponents/AuthInput";
 export {default as AuthPassword} from "../components/authComponents/AuthPassword";
+export {default as FollowBtn} from "../components/templates/FollowBtn";

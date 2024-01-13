@@ -4,34 +4,14 @@ import {
   Flex,
   VStack,
   Text,
-  Link,
-  MenuButton,
-  Menu,
-  Portal,
-  MenuList,
-  MenuItem,
   useToast,
   useColorMode,
 } from "@chakra-ui/react";
-import { BsInstagram } from "react-icons/bs";
-import { CgMoreO } from "react-icons/cg";
+import FollowBtn from "./templates/FollowBtn";
 
 const UserHeader = ({userProfile}) => {
   const toast = useToast();
   const { colorMode } = useColorMode();
-
-  const handleCopy = () => {
-    const userURL = window.location.href;
-    navigator.clipboard.writeText(userURL).then(() => {
-      toast({
-        title: "Copied To Clipboard",
-        description: "Use Ctrl + V to access the profile URL",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
-    });
-  };
 
   return (
     <VStack mt="60px" alignItems="start" spacing={3.5}>
@@ -58,49 +38,13 @@ const UserHeader = ({userProfile}) => {
         <Box>
           <Avatar
             name={userProfile?.name}
-            src={userProfile?.img}
+            src={userProfile?.profilePic}
             size={{ base: "lg", md: "xl" }}
           />
         </Box>
       </Flex>
       <Text>{userProfile?.bio}</Text>
-      <Flex justifyContent="space-between" alignItems="center" w="full">
-        <Flex alignItems="center" gap={2}>
-          <Text color="gray.light">{userProfile?.followers?.length || 0} follower(s)</Text>
-          <Box w={1} h={1} bg="gray.light" borderRadius="full"></Box>
-          <Link href="https://instagram.com" color="gray.light" target="_blank">
-            instagram.com
-          </Link>
-        </Flex>
-        <Flex alignItems="center">
-          <Box
-            className="icon-container"
-            _hover={{ bg: colorMode === "dark" ? "#1e1e1e" : "gray.100" }}
-          >
-            <BsInstagram size={20} />
-          </Box>
-          <Box
-            className="icon-container"
-            _hover={{ bg: colorMode === "dark" ? "#1e1e1e" : "gray.100" }}
-          >
-            <Menu>
-              <MenuButton>
-                <CgMoreO size={20} />
-              </MenuButton>
-              <Portal>
-                <MenuList bg={colorMode === "dark" ? "gray.dark" : "gray.300"}>
-                  <MenuItem
-                    bg={colorMode === "dark" ? "gray.dark" : "gray.300"}
-                    onClick={handleCopy}
-                  >
-                    Copy Link
-                  </MenuItem>
-                </MenuList>
-              </Portal>
-            </Menu>
-          </Box>
-        </Flex>
-      </Flex>
+      <FollowBtn userProfile={userProfile}/>
 
       <Flex justifyContent="space-between" w="full">
         <Flex

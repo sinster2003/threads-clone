@@ -1,30 +1,27 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { UserHeader, UserPost } from "../components"
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useRecoilValue } from "recoil";
+import userAtom from "../atoms/userAtom";
 
 const UserPage = () => {
   const { username } = useParams();
-  const [userProfile, setUserProfile] = useState({
-    name: "",
-    username: "",
-    img: "",
-    bio: "",
-    followers: "",
-    posts: []
-  });
+  const [userProfile, setUserProfile] = useState({});
+  const user = useRecoilValue(userAtom);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if(!user) {
+      navigate("/login");
+    }
+  }, [user]);
 
   useEffect(() => {
     axios.get(`/api/users/profile/${username}`)
     .then(response => response.data)
-    .then(result => setUserProfile({
-        name: result?.name,
-        username: result?.username,
-        img: result?.profilePic,
-        bio: result?.bio,
-        followers: result?.followers,
-        posts: result?.posts
-    }))
+    .then(result => setUserProfile(result))
+    .catch(error => console.log(error))
   }, []);
 
   return (

@@ -50,7 +50,9 @@ const signupUser = async (req, res) => {
       username: user.username,
       email: user.email,
       bio: user.bio,
-      profilePic: user.profilePic
+      profilePic: user.profilePic,
+      followers: [],
+      following: []
     });
   } else {
     return res.status(400).json({ error: "Invalid user credentials!" });
@@ -86,7 +88,9 @@ const loginUser = async (req, res) => {
     username: isExistingUser.username,
     email: isExistingUser.email,
     bio: isExistingUser.bio,
-    profilePic: isExistingUser.profilePic
+    profilePic: isExistingUser.profilePic,
+    following: isExistingUser.following,
+    followers: isExistingUser.followers
   });
 };
 
@@ -127,9 +131,11 @@ const followUnfollowUser = async (req, res) => {
       $pull: { followers: userWhoFollows._id.toString() },
     }); // followed user
 
+    const user = await User.findById(userWhoFollows._id.toString()).select("-password");
+
     res
       .status(200)
-      .json({ message: `You have unfollowed ${userToBeFollowed.username}` });
+      .json({ user, message: `You have unfollowed ${userToBeFollowed.username}`, status: false }); // false status denotes unfollowed
   } else {
 
     // follow user
@@ -141,9 +147,11 @@ const followUnfollowUser = async (req, res) => {
       $push: { followers: userWhoFollows._id.toString() },
     });
 
+    const user = await User.findById(userWhoFollows._id.toString()).select("-password");
+
     res
       .status(200)
-      .json({ message: `You have followed ${userToBeFollowed.username}` });
+      .json({ user, message: `You have followed ${userToBeFollowed.username}`, status: true }); // true status denotes followed
   }
 };
 
