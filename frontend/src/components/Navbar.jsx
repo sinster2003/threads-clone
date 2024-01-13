@@ -1,9 +1,10 @@
-import { Flex, IconButton, Image, useColorMode, Tooltip } from "@chakra-ui/react";
+import { Flex, IconButton, Image, useColorMode, Tooltip, Box } from "@chakra-ui/react";
 import { MdLogout } from "react-icons/md";
 import { FaHouse } from "react-icons/fa6";
 import { useRecoilState } from "recoil";
 import userAtom from "../atoms/userAtom";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
 
@@ -13,7 +14,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.post("http://localhost:3001/api/users/logout");
+      const response = await axios.post("/api/users/logout");
       console.log(response.data.message);
       localStorage.removeItem("user");
       setUserData(null);
@@ -26,9 +27,9 @@ const Navbar = () => {
 
   return (
     <Flex mt={10} justifyContent="center" alignItems="center" position="relative">
-      {user && (<IconButton position="absolute" left={0}>
+      <Box position="absolute" left={0}>{user && (<Link to="/"><IconButton >
         <FaHouse/>
-      </IconButton>)}
+      </IconButton></Link>)}</Box>
       <Image 
         src={colorMode === "dark" ? "/light-logo.svg" : "/dark-logo.svg"} 
         alt="logo"
@@ -38,8 +39,8 @@ const Navbar = () => {
       />
       {user && (
         <Tooltip hasArrow label="logout" fontSize="medium">
-          <IconButton position="absolute" right={0}>
-            <MdLogout onClick={handleLogout}/>
+          <IconButton position="absolute" right={0} onClick={handleLogout}>
+            <MdLogout/>
           </IconButton>
         </Tooltip>)
       }

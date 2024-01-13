@@ -16,14 +16,14 @@ import { Actions } from "./";
 import { BsThreeDots } from "react-icons/bs";
 import { useState } from "react";
 
-const UserPost = ({ image, replies, text, likes }) => {
+const UserPost = ({post, userProfile}) => {
   const toast = useToast();
   const { colorMode } = useColorMode();
   const [isLiked, setIsLiked] = useState(false);
 
   const handleCopyPost = (link) => {
     console.log(link);
-    navigator.clipboard.writeText(link).then(() => {
+    navigator.clipboard.writeText(`${window.location.origin}${link}`).then(() => {
       toast({
         title: "Copied post link",
         description: "use Ctrl + V to access the post link",
@@ -35,14 +35,14 @@ const UserPost = ({ image, replies, text, likes }) => {
   };
 
   return (
-    <Link to="/mark/post/1">
+    <Link to={`/${userProfile?.username}/post/${post._id}`}>
       <Flex mt={8}>
         <Flex
           flexDirection="column"
           alignItems="center"
           minW={{ base: 12, sm: 20 }}
         >
-          <Avatar name="Mark Zuckerberg" size="md" src="zuck-avatar.png" />
+          <Avatar name={userProfile?.name} size="md" src={userProfile?.img} />
           <Box h="full" w={0.001} bg="gray.500" my={6}></Box>
           <Flex
             flexDirection="row"
@@ -75,8 +75,8 @@ const UserPost = ({ image, replies, text, likes }) => {
         <Flex flexDirection="column" ml={{ base: 2, md: 6 }} gap={4}>
           <Flex justifyContent="space-between">
             <Flex alignItems="center" gap={1}>
-              <Text fontWeight="bold">markzuckerberg</Text>
-              <Image src="verified.png" w={4} h={4} />
+              <Text fontWeight="bold">{userProfile?.username}</Text>
+              <Image src="/verified.png" w={4} h={4} />
             </Flex>
             <Flex alignItems="center" gap={4}>
               <Text color="gray.light">1d</Text>
@@ -88,7 +88,7 @@ const UserPost = ({ image, replies, text, likes }) => {
                   <MenuList bg={colorMode === "dark" ? "gray.dark": "gray.200"}>
                     <MenuItem
                       bg={colorMode === "dark" ? "gray.dark": "gray.200"}
-                      onClick={() => handleCopyPost("/mark/post/1")}
+                      onClick={() => handleCopyPost(`/${userProfile?.username}/post/${post._id}`)}
                     >
                       Copy Post Link
                     </MenuItem>
@@ -104,15 +104,15 @@ const UserPost = ({ image, replies, text, likes }) => {
                 md: "md",
               }}
             >
-              {text}
+              {post?.text}
             </Text>
-            {image && <Image src={image} borderRadius={4} />}
+            {post?.img && <Image src={post?.img} borderRadius={4} />}
           </Flex>
           <Actions isLiked={isLiked} setIsLiked={setIsLiked}/>
           <Flex mb={8} gap={3} alignItems="center">
-            <Text color="gray.light">{replies} replies</Text>
+            <Text color="gray.light">{post?.replies?.length} replies</Text>
             <Box w={1} h={1} bg="gray.light" borderRadius="full"></Box>
-            <Text color="gray.light">{likes + (isLiked ? 1 : 0)} likes</Text>
+            <Text color="gray.light">{post?.likes?.length + (isLiked ? 1 : 0)} likes</Text>
           </Flex>
         </Flex>
       </Flex>

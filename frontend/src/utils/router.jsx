@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom"
 import { UserPage, PostPage, HomePage, Signup } from "../pages";
 import App from "../App";
 import LoginPage from "../pages/LoginPage";
+import UpdateProfilePage from "../pages/UpdateProfilePage";
 
 const routes = createBrowserRouter([
     {
@@ -19,6 +20,10 @@ const routes = createBrowserRouter([
             {
                 path: "/login",
                 element: <LoginPage/>
+            },
+            {
+                path: "/update",
+                element: <UpdateProfilePage/>,
             },
             {
                 path: "/:username",

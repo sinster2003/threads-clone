@@ -17,7 +17,7 @@ const HomePage = () => {
 
   return (
     <Flex justifyContent="center" alignItems="center" mt={10}>
-        <Link to="/mark">
+        <Link to="sinster123">
             <Button>Visit Profile</Button>
         </Link>
     </Flex>

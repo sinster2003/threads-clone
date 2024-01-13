@@ -16,7 +16,7 @@ import {
 import { BsInstagram } from "react-icons/bs";
 import { CgMoreO } from "react-icons/cg";
 
-const UserHeader = () => {
+const UserHeader = ({userProfile}) => {
   const toast = useToast();
   const { colorMode } = useColorMode();
 
@@ -34,14 +34,14 @@ const UserHeader = () => {
   };
 
   return (
-    <VStack mt={10} alignItems="start" spacing={3.5}>
+    <VStack mt="60px" alignItems="start" spacing={3.5}>
       <Flex justifyContent="space-between" w="100%">
         <Box>
           <Text fontSize="2xl" fontWeight="bold" mb={1}>
-            Mark Zuckerberg
+            {userProfile?.name}
           </Text>
           <Flex alignItems="center" gap={3}>
-            <Text fontSize="md">@zuckerberg</Text>
+            <Text fontSize="md">@{userProfile?.username}</Text>
             <Text
               fontSize="xs"
               w={20}
@@ -57,16 +57,16 @@ const UserHeader = () => {
         </Box>
         <Box>
           <Avatar
-            name="Mark Zuckerberg"
-            src="zuck-avatar.png"
+            name={userProfile?.name}
+            src={userProfile?.img}
             size={{ base: "lg", md: "xl" }}
           />
         </Box>
       </Flex>
-      <Text>Co Founder, Executive Chairman and CEO of Meta Platforms.</Text>
+      <Text>{userProfile?.bio}</Text>
       <Flex justifyContent="space-between" alignItems="center" w="full">
         <Flex alignItems="center" gap={2}>
-          <Text color="gray.light">100k followers</Text>
+          <Text color="gray.light">{userProfile?.followers?.length || 0} follower(s)</Text>
           <Box w={1} h={1} bg="gray.light" borderRadius="full"></Box>
           <Link href="https://instagram.com" color="gray.light" target="_blank">
             instagram.com

@@ -55,12 +55,18 @@ const Signup = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:3001/api/users/signup", signupBody);
+      const response = await axios.post("/api/users/signup", signupBody);
       localStorage.setItem("user", JSON.stringify(response.data));
       setUserData(response.data);
     }
     catch(error) {
-      console.log(error.response?.data?.message);
+      toast({
+        title: `Error`,
+        description: `${error.response?.data?.message}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      })
     } 
 
   };

@@ -51,12 +51,19 @@ const LoginPage = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:3001/api/users/login", loginBody);
+      const response = await axios.post("/api/users/login", loginBody);
       localStorage.setItem("user", JSON.stringify(response.data));
       setUserData(response.data);
     }
     catch(error) {
-      console.log(error.response?.data?.message);
+      toast({
+        title: `Error`,
+        description: `${(error.response?.data?.message)}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      })
+      ;
     } 
 
   };

@@ -5,7 +5,7 @@ const { createPostObject } = require("../utils/types/zod");
 const getPost = async (req,res) => {
     const postId = req.params.id;
 
-    const post = await Post.findById(postId).populate("postedBy", {username: 1});
+    const post = await Post.findById(postId).populate("postedBy");
 
     res.status(200).json(post);
 }
@@ -37,6 +37,10 @@ const createPost = async (req,res) => {
     });
 
     const savedPost = await post.save();
+
+    await User.findByIdAndUpdate(postedBy, {
+        $push: {posts: savedPost._id}
+    })
 
     return res.status(201).json(savedPost);
 }

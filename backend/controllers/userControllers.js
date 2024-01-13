@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const generateToken = require("../utils/generateToken");
 const jwt = require("jsonwebtoken");
 const { signupObject, loginObject } = require("../utils/types/zod");
+const { v2 : cloudinary } = require("cloudinary");
 
 const signupUser = async (req, res) => {
   const { name, email, username, password } = req.body;
@@ -48,6 +49,8 @@ const signupUser = async (req, res) => {
       name: user.name,
       username: user.username,
       email: user.email,
+      bio: user.bio,
+      profilePic: user.profilePic
     });
   } else {
     return res.status(400).json({ error: "Invalid user credentials!" });
@@ -82,6 +85,8 @@ const loginUser = async (req, res) => {
     name: isExistingUser.name,
     username: isExistingUser.username,
     email: isExistingUser.email,
+    bio: isExistingUser.bio,
+    profilePic: isExistingUser.profilePic
   });
 };
 
@@ -145,7 +150,8 @@ const followUnfollowUser = async (req, res) => {
 const updateUser = async (req,res) => {
 
   const userTobeUpdated = req.user;
-  const { name, username, email, password, bio, profilePic } = req.body;
+  const { name, username, email, password, bio } = req.body;
+  let { profilePic } = req.body;
 
   const userId = userTobeUpdated?._id.toString();
 
@@ -165,6 +171,16 @@ const updateUser = async (req,res) => {
     user.password = hashedPassword;
   }  
 
+  if(profilePic) {
+    if(user.profilePic) {
+      // delete old one 
+      await cloudinary.uploader.destroy(user.profilePic?.split("/").pop().split(".")[0]);
+    }
+    // store in cloudinary
+    const response = await cloudinary.uploader.upload(profilePic);
+    profilePic = response.secure_url;
+  }
+
   user.name = name || user.name;
   user.username = username || user.username;
   user.email = email || user.email;
@@ -173,14 +189,16 @@ const updateUser = async (req,res) => {
 
   await user.save();
 
-  res.status(200).json({message: "User profile updated successfully"});
+  user.password = null; // for frontend security
+
+  res.status(200).json(user);
 }
 
 const getUserProfile = async (req,res) => {
 
   const { username } = req.params;
 
-  const getUser = await User.findOne({username}).select("-password").select("-updatedAt");
+  const getUser = await User.findOne({username}).select("-password").select("-updatedAt").populate("posts");
 
   if(!getUser) {
     return res.status(404).json({message: "User not found"});
