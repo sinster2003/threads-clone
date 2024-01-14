@@ -29,6 +29,7 @@ const UpdateProfilePage = () => {
     email: user?.email,
     password: ""
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -41,9 +42,9 @@ const UpdateProfilePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try{
       const updatedObject = {...userProfileData, profilePic: imgUrl};
-      console.log(updatedObject);
       const response = await axios.put(`/api/users/update/${user._id}`, updatedObject, { withCredentials: true });
       const result = await response.data;
       localStorage.setItem("user", JSON.stringify(result));
@@ -55,6 +56,7 @@ const UpdateProfilePage = () => {
         isClosable: true,
         status: "success"
       })
+      setIsLoading(false);
     }
     catch(error) {
       console.log(error);
@@ -170,7 +172,7 @@ const UpdateProfilePage = () => {
           </Button>
           <Button
             type="submit"
-            loadingText="Submitting"
+            isLoading={isLoading}
             bg={useColorModeValue("gray.600", "gray.800")}
             color="white"
             w="full"

@@ -1,7 +1,8 @@
 import axios from "axios";
 
-const followUser = async (id, toast, setUserData) => {
+const followUser = async (id, toast, setUserData, setLoading) => {
     try {
+        setLoading(true);
         const response = await axios.put(`/api/users/follow/${id}`, null, {withCredentials: true});
         const result = await response.data;
         localStorage.setItem("user", JSON.stringify(result?.user));
@@ -13,7 +14,6 @@ const followUser = async (id, toast, setUserData) => {
             duration: 3000,
             isClosable: true
         })
-        return result?.status;
     }
     catch(error) {
         console.log(error);

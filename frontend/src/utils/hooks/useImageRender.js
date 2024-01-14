@@ -32,7 +32,7 @@ const useImageRender = () => {
         }
     }  
     
-  return {getFilesToRead, imgUrl}
+  return {getFilesToRead, imgUrl, setImgUrl}
 }
 
 export default useImageRender;

@@ -6,12 +6,45 @@ import {
   Text,
   useToast,
   useColorMode,
+  Button,
+  useColorModeValue,
+  MenuButton,
+  Menu,
+  Portal,
+  MenuList,
+  MenuItem,
 } from "@chakra-ui/react";
 import FollowBtn from "./templates/FollowBtn";
+import { useRecoilValue } from "recoil";
+import userAtom from "../atoms/userAtom";
+import { Link } from "react-router-dom";
+import { BsInstagram } from "react-icons/bs";
+import { CgMoreO } from "react-icons/cg";
+import { useEffect, useState } from "react";
 
-const UserHeader = ({userProfile}) => {
+const UserHeader = ({ userProfile }) => {
   const toast = useToast();
   const { colorMode } = useColorMode();
+  const userLoggedIn = useRecoilValue(userAtom);
+  const [followersCount, setFollowersCount] = useState(0);
+
+  // userProfile data takes time to render so if changing the state it would undefined initially
+  useEffect(() => {
+    setFollowersCount(userProfile?.followers?.length);
+  }, [userProfile])
+
+  const handleCopy = () => {
+    const userURL = window.location.href;
+    navigator.clipboard.writeText(userURL).then(() => {
+      toast({
+        title: "Copied To Clipboard",
+        description: "Use Ctrl + V to access the profile URL",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+    });
+  };
 
   return (
     <VStack mt="60px" alignItems="start" spacing={3.5}>
@@ -44,7 +77,56 @@ const UserHeader = ({userProfile}) => {
         </Box>
       </Flex>
       <Text>{userProfile?.bio}</Text>
-      <FollowBtn userProfile={userProfile}/>
+      {/* Authenticaticated user profile must contain update profile and not follow */}
+      {userProfile?._id !== userLoggedIn?._id ? (
+        <FollowBtn userProfile={userProfile} followersCount={followersCount} setFollowersCount={setFollowersCount}/>
+      ) : (
+        <Link to="/update">
+          <Button>Update Profile</Button>
+        </Link>
+      )}
+
+      <Flex justifyContent="space-between" alignItems="center" w="full">
+        <Flex alignItems="center" gap={2}>
+          <Text color="gray.light">
+            {followersCount} follower(s)
+          </Text>
+          <Box w={1} h={1} bg="gray.light" borderRadius="full"></Box>
+          <Link to="https://instagram.com" target="_blank">
+            <Text color="gray.light" _hover={{ textDecoration: "underline" }}>
+              instagram.com
+            </Text>
+          </Link>
+        </Flex>
+        <Flex alignItems="center">
+          <Box
+            className="icon-container"
+            _hover={{ bg: useColorModeValue("gray.100", "#1e1e1e") }}
+          >
+            <BsInstagram size={20} />
+          </Box>
+          <Box
+            className="icon-container"
+            _hover={{ bg: useColorModeValue("gray.100", "#1e1e1e") }}
+          >
+            <Menu>
+              <MenuButton>
+                <CgMoreO size={20} />
+              </MenuButton>
+              <Portal>
+                <MenuList bg={useColorModeValue("gray.300", "gray.dark")}>
+                  <MenuItem
+                    bg={useColorModeValue("gray.300", "gray.dark")}
+                    onClick={handleCopy}
+                  >
+                    Copy Link
+                  </MenuItem>
+                </MenuList>
+              </Portal>
+            </Menu>
+          </Box>
+        </Flex>
+      </Flex>
 
       <Flex justifyContent="space-between" w="full">
         <Flex

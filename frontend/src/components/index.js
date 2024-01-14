@@ -16,3 +16,4 @@ export {default as AuthAsk} from "../components/authComponents/AuthAsk";
 export {default as AuthInput} from "../components/authComponents/AuthInput";
 export {default as AuthPassword} from "../components/authComponents/AuthPassword";
 export {default as FollowBtn} from "../components/templates/FollowBtn";
+export {default as CreatePost} from "../components/CreatePost";

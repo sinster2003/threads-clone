@@ -1,15 +1,17 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { UserHeader, UserPost } from "../components"
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom";
+import { Button, Flex, useToast } from "@chakra-ui/react";
 
 const UserPage = () => {
   const { username } = useParams();
   const [userProfile, setUserProfile] = useState({});
   const user = useRecoilValue(userAtom);
   const navigate = useNavigate();
+  const toast = useToast();
 
   useEffect(() => {
     if(!user) {
@@ -21,8 +23,27 @@ const UserPage = () => {
     axios.get(`/api/users/profile/${username}`)
     .then(response => response.data)
     .then(result => setUserProfile(result))
-    .catch(error => console.log(error))
+    .catch(error => {
+      toast({
+        title: "Error",
+        description: error?.response?.data?.message || "Something went wrong",
+        status: "error",
+        duration: 3000,
+        isClosable: true
+      })
+      setUserProfile(null);
+    })
   }, []);
+
+  if(!userProfile) {
+    return (
+      <Flex w="full" justifyContent="center" mt={10}>
+        <Link to="/">
+          <Button>Back to Safety</Button>
+        </Link>
+      </Flex>
+    );
+  }
 
   return (
     <>
