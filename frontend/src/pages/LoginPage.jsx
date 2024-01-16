@@ -2,6 +2,7 @@ import {
   Stack,
   Flex,
   useToast,
+  Box,
 } from "@chakra-ui/react";
 import { AuthAsk, AuthButton, AuthHeader, AuthInput, AuthPassword } from "../components";
 import { useForm } from "react-hook-form";
@@ -69,6 +70,7 @@ const LoginPage = () => {
   };
 
   return (
+    <Box w="full">
     <form onSubmit={handleSubmit(onSubmit)}>
     <Flex
       w="full"
@@ -87,6 +89,7 @@ const LoginPage = () => {
       </Stack>
     </Flex>
     </form>
+    </Box>
   );
 };
 

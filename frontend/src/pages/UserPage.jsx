@@ -4,14 +4,15 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom";
-import { Button, Flex, useToast } from "@chakra-ui/react";
+import { Box, Button, Flex, Spinner, Text, useToast } from "@chakra-ui/react";
 
 const UserPage = () => {
   const { username } = useParams();
-  const [userProfile, setUserProfile] = useState({});
+  const [userProfile, setUserProfile] = useState(null);
   const user = useRecoilValue(userAtom);
   const navigate = useNavigate();
   const toast = useToast();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if(!user) {
@@ -22,7 +23,9 @@ const UserPage = () => {
   useEffect(() => {
     axios.get(`/api/users/profile/${username}`)
     .then(response => response.data)
-    .then(result => setUserProfile(result))
+    .then(result => {
+      setUserProfile(result)
+    })
     .catch(error => {
       toast({
         title: "Error",
@@ -33,7 +36,22 @@ const UserPage = () => {
       })
       setUserProfile(null);
     })
-  }, []);
+    .finally(() => setIsLoading(false))
+  }, [user]); // when user logged in posts or data updates the user page must rerender
+
+  if(isLoading) {
+    return (
+      <Flex justifyContent="center" alignItems="center" my={10}>
+      <Spinner
+        thickness='4px'
+        speed='0.65s'
+        emptyColor='gray.200'
+        color='gray.light'
+        size='xl'
+      />
+      </Flex>
+    );
+  }
 
   if(!userProfile) {
     return (
@@ -46,19 +64,14 @@ const UserPage = () => {
   }
 
   return (
-    <>
+    <Box w="full">
+    { 
+      (!isLoading && userProfile) &&
       <UserHeader userProfile={userProfile}/>
-      {
-        userProfile?.posts?.map((post) =><UserPost key={post._id} post={post} userProfile={userProfile}/>)
-      }
-
-      {/*
-      <UserPost text={"Introducing Threads the new generation social media platform"} image={"post1.png"} likes={10} replies={0}/>
-      <UserPost text={"The Goat 🐐"} image={"post2.jpg"} likes={100} replies={23}/>
-      <UserPost text={"Be ready to die"} image={"post3.png"} likes={20} replies={192}/>
-      <UserPost text={"Remember the name: Mark Zuckerberg"} likes={127} replies={11} />
-     */}
-      </>
+    }
+    { userProfile?.posts?.length === 0 && <Text color="gray.light" fontSize="lg" textAlign="center" my={10}>No Posts Yet</Text>}
+    { userProfile?.posts?.map((post) =><UserPost key={post._id} post={post} userProfile={userProfile}/>) }
+    </Box>
   )
 }
 

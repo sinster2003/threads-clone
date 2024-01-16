@@ -14,6 +14,7 @@ import {
   Avatar,
   Center,
   useToast,
+  Box,
 } from "@chakra-ui/react";
 import useImageRender from "../utils/hooks/useImageRender";
 import axios from "axios";
@@ -64,6 +65,7 @@ const UpdateProfilePage = () => {
   }
 
   return (
+    <Box w="full">
     <form onSubmit={handleSubmit}>
     <Flex align={"center"} justify={"center"}>
       <Stack
@@ -186,6 +188,7 @@ const UpdateProfilePage = () => {
       </Stack>
     </Flex>
     </form>
+    </Box>
   );
 };
 

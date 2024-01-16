@@ -1,4 +1,4 @@
-import { HStack, Stack, Flex, useToast } from "@chakra-ui/react";
+import { HStack, Stack, Flex, useToast, Box } from "@chakra-ui/react";
 import {
   AuthAsk,
   AuthButton,
@@ -72,6 +72,7 @@ const Signup = () => {
   };
 
   return (
+    <Box w="full">
     <form onSubmit={handleSubmit(onSubmit)}>
       <Flex
         w="full"
@@ -97,6 +98,7 @@ const Signup = () => {
         </Stack>
       </Flex>
     </form>
+    </Box>
   );
 };
 

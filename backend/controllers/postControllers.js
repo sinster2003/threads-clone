@@ -1,6 +1,7 @@
 const Post = require("../models/posts");
 const User = require("../models/users");
 const { createPostObject } = require("../utils/types/zod");
+const {v2: cloudinary} = require("cloudinary");
 
 const getPost = async (req,res) => {
     const postId = req.params.id;
@@ -11,7 +12,8 @@ const getPost = async (req,res) => {
 }
 
 const createPost = async (req,res) => {
-    const { postedBy, text, img } = req.body;
+    const { postedBy, text } = req.body;
+    let { img } = req.body;
 
     /* input validation */
     createPostObject.parse({
@@ -30,6 +32,11 @@ const createPost = async (req,res) => {
         return res.status(401).json({message: "Unauthorized to create a post"});
     }
 
+    if(img) {
+        const uploadedImage = await cloudinary.uploader.upload(img);
+        img = uploadedImage.secure_url;
+    }
+
     const post = new Post({
         postedBy,
         text,
@@ -42,7 +49,9 @@ const createPost = async (req,res) => {
         $push: {posts: savedPost._id}
     })
 
-    return res.status(201).json(savedPost);
+    const user = await User.findById(postedBy);
+
+    return res.status(201).json({savedPost, user});
 }
 
 const deletePost = async (req,res) => {

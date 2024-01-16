@@ -1,6 +1,5 @@
 import { AddIcon } from "@chakra-ui/icons";
 import {
-    Box,
   Button,
   CloseButton,
   Flex,
@@ -22,6 +21,10 @@ import { useDisclosure } from "@chakra-ui/react";
 import { useRef, useState } from "react";
 import { FaImages } from "react-icons/fa";
 import useImageRender from "../utils/hooks/useImageRender";
+import axios from "axios";
+import userAtom from "../atoms/userAtom";
+import { useRecoilState } from "recoil";
+import { useNavigate } from "react-router-dom";
 
 const maxCharacters = 500; 
 
@@ -32,6 +35,9 @@ const CreatePost = () => {
   const { getFilesToRead, imgUrl, setImgUrl } = useImageRender();
   const toast= useToast();
   const inputFile = useRef(null);
+  const [userLoggedInData, setUserLoggedInData] = useRecoilState(userAtom);
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleTextArea = (e) => {
     if(e.target.value.length > maxCharacters) {
@@ -55,6 +61,40 @@ const CreatePost = () => {
     setMaxChar(maxCharacters);
     setImgUrl(null);
     inputFile.current.value = null; // to make sure same file can be selected again
+  }
+
+  const handlePostLogic = async () => {
+    try{
+      setIsLoading(true);
+      const postBody = {
+        postedBy: userLoggedInData._id,
+        text: textArea,
+        img: imgUrl || ""
+      };
+      const response = await axios.post("/api/posts/create", postBody);
+      const result = response.data;
+      localStorage.setItem("user", JSON.stringify(result.user));
+      setUserLoggedInData(result.user);
+      handleCloseModal();
+      setIsLoading(false);
+      navigate(`/${userLoggedInData.username}`);
+      toast({
+        title: "Posted successfully",
+        description: "Creation of post successful",
+        status: "success",
+        duration: 3000,
+        isClosable: true
+      });
+    }
+    catch(error) {
+      toast({
+        title: "Error",
+        description: error?.message, 
+        status: "error",
+        duration: 3000,
+        isClosable: true
+      });
+    }
   }
 
   return (
@@ -84,7 +124,7 @@ const CreatePost = () => {
                 <Flex gap={2} flexDirection="column" alignItems="flex-end">
                     <CloseButton onClick={() => {
                         setImgUrl(null);
-                        inputFile.current.value = null;
+                        inputFile.current.value = null; // this has to be so the same image can be picked again
                     }}/>
                     <Image src={imgUrl} alt="post-image"/>
                 </Flex>
@@ -96,7 +136,7 @@ const CreatePost = () => {
             <Button colorScheme="red" mr={3} onClick={handleCloseModal}>
               Cancel
             </Button>
-            <Button variant="ghost">Create Post</Button>
+            <Button variant="ghost" onClick={handlePostLogic} isLoading={isLoading}>Create Post</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
