@@ -140,7 +140,7 @@ const feedPost = async (req,res) => {
         return res.status(404).json({message: "User not found"});
     }
 
-    const posts = await Post.find({postedBy: {$in: user.following}}).sort({createdAt: -1});
+    const posts = await Post.find({postedBy: {$in: user.following}}).sort({createdAt: -1}).populate("postedBy");
 
     res.status(200).json(posts);
 }

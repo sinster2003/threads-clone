@@ -126,7 +126,7 @@ const CreatePost = () => {
                         setImgUrl(null);
                         inputFile.current.value = null; // this has to be so the same image can be picked again
                     }}/>
-                    <Image src={imgUrl} alt="post-image"/>
+                    <Image src={imgUrl} alt="post-image" alignSelf="center"/>
                 </Flex>
                 }
             </Flex>

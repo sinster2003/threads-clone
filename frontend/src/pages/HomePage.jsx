@@ -1,27 +1,78 @@
-import { Button, Flex } from '@chakra-ui/react'
-import { useEffect } from 'react'
-import { Link, redirect, useNavigate } from 'react-router-dom'
-import userAtom from '../atoms/userAtom';
-import { useRecoilValue } from 'recoil';
+import { Button, Flex, Spinner, Text } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import userAtom from "../atoms/userAtom";
+import { useRecoilValue } from "recoil";
+import axios from "axios";
+import { UserPost } from "../components";
 
 const HomePage = () => {
-
-  const user = useRecoilValue(userAtom);
+  const userLoggedInData = useRecoilValue(userAtom);
   const navigate = useNavigate();
+  const [posts, setPosts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if(!user) {
+    if (!userLoggedInData) {
       navigate("/login");
     }
-  }, [user]);
+
+    const getFeed = async () => {
+      try {
+        const response = await axios.get("/api/posts/feed");
+        const feedPosts = await response.data;
+        setPosts(feedPosts);
+      } catch (error) {
+        console.log(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    getFeed();
+  }, [userLoggedInData]);
 
   return (
-    <Flex justifyContent="center" alignItems="center" mt={10}>
-        <Link to="sinster123">
-            <Button>Visit Profile</Button>
-        </Link>
-    </Flex>
-  )
-}
+    <Flex
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      mt={10}
+      w="full"
+    >
+      <Link to={`/${userLoggedInData?.username}`}>
+        <Button>Visit Profile</Button>
+      </Link>
+      
+      {isLoading && (
+        <Flex justifyContent="center" alignItems="center" my={10}>
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="gray.light"
+            size="xl"
+          />
+        </Flex>
+      )}
 
-export default HomePage
+      {(!isLoading && posts?.length) === 0 && (
+        <Text color="gray.light" fontSize="lg" textAlign="center" my={10}>
+          Follow People To Light Your Feed Up🤗
+        </Text>
+      )}
+
+      {!isLoading &&
+        posts?.map((post) => (
+          <UserPost
+            key={post._id}
+            post={post}
+            userProfile={post.postedBy}
+            home="home"
+          />
+        ))}
+    </Flex>
+  );
+};
+
+export default HomePage;

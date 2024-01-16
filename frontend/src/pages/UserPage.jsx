@@ -1,5 +1,5 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { UserHeader, UserPost } from "../components"
+import { UserHeader, UserPost } from "../components";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRecoilValue } from "recoil";
@@ -18,9 +18,7 @@ const UserPage = () => {
     if(!user) {
       navigate("/login");
     }
-  }, [user]);
 
-  useEffect(() => {
     axios.get(`/api/users/profile/${username}`)
     .then(response => response.data)
     .then(result => {

@@ -1,15 +1,15 @@
-const Like = ({isLiked, setIsLiked}) => {
-
+const Like = ({post}) => {
+  console.log(post);
   return (
     <svg
         aria-label="Like"
-        color={isLiked ? "rgb(237, 73, 86)": ""}
-        fill={isLiked ? "rgb(237, 73, 86)": "transparent"}
+        color={"rgb(237, 73, 86)"}
+        fill={"rgb(237, 73, 86)"}
         height="19"
         role="img"
         viewBox="0 0 24 22"
         width="20"
-        onClick={() => setIsLiked(!isLiked)}
+        onClick={() => {}}
         cursor="pointer"
       >
         <title>Like</title>
