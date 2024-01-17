@@ -1,15 +1,44 @@
+import { useState } from "react";
+import { useRecoilState } from "recoil";
+import userAtom from "../../atoms/userAtom";
+import axios from "axios";
+import { useToast } from "@chakra-ui/react";
+
 const Like = ({post}) => {
-  console.log(post);
+  const [userLoggedInData, setUserLoggedInData] = useRecoilState(userAtom)
+  const [isLiked, setIsLiked] = useState(post?.likes?.includes(userLoggedInData._id));
+  const toast = useToast();
+
+  const handleLikePost = async () => {
+    try {
+      const response = await axios.put(`/api/posts/like/${post._id}`);
+      const result = await response.data;
+      const user = result.user;
+      localStorage.setItem("user", JSON.stringify(user));
+      setUserLoggedInData(user);
+      setIsLiked(!isLiked);
+      toast({
+        title: `${result.message}`,
+        status: "success",
+        duration: 3000,
+        isClosable: true
+      })
+    }
+    catch(error) {
+      console.log(error);
+    }
+  }
+
   return (
     <svg
         aria-label="Like"
-        color={"rgb(237, 73, 86)"}
-        fill={"rgb(237, 73, 86)"}
+        color={isLiked ?"rgb(237, 73, 86)": "white"}
+        fill={isLiked ?"rgb(237, 73, 86)": "transparent"}
         height="19"
         role="img"
         viewBox="0 0 24 22"
         width="20"
-        onClick={() => {}}
+        onClick={handleLikePost}
         cursor="pointer"
       >
         <title>Like</title>

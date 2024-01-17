@@ -11,17 +11,17 @@ import {
   MenuItem,
   useToast,
   useColorMode,
+  useDisclosure,
 } from "@chakra-ui/react";
-import { Actions } from "./";
+import { Actions, ReplyModal } from "./";
 import { BsThreeDots } from "react-icons/bs";
-import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 
 const UserPost = ({post, userProfile, home}) => {
   const toast = useToast();
   const { colorMode } = useColorMode();
-  const [isLiked, setIsLiked] = useState(false);
-  const navigate= useNavigate();
+  const navigate = useNavigate();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleCopyPost = (link) => {
     console.log(link);
@@ -37,6 +37,7 @@ const UserPost = ({post, userProfile, home}) => {
   };
 
   return (
+    <Box>
     <Link to={`/${userProfile?.username}/post/${post._id}`}>
       <Flex mt={8}>
         <Flex
@@ -113,15 +114,17 @@ const UserPost = ({post, userProfile, home}) => {
             </Text>
             {post?.img && <Image src={post?.img} borderRadius={4} w={440}/>}
           </Flex>
-          <Actions post={post}/>
+          <Actions post={post} onOpen={onOpen}/>
           <Flex mb={8} gap={3} alignItems="center">
             <Text color="gray.light">{post?.replies?.length} replies</Text>
             <Box w={1} h={1} bg="gray.light" borderRadius="full"></Box>
-            <Text color="gray.light">{post?.likes?.length + (isLiked ? 1 : 0)} likes</Text>
+            <Text color="gray.light">{post?.likes?.length} likes</Text>
           </Flex>
         </Flex>
       </Flex>
     </Link>
+    <ReplyModal post={post} userProfile={userProfile} isOpen={isOpen} onClose={onClose}/>
+    </Box>
   );
 };
 

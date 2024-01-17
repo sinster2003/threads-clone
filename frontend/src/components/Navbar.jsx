@@ -4,19 +4,21 @@ import { FaHouse } from "react-icons/fa6";
 import { useRecoilState } from "recoil";
 import userAtom from "../atoms/userAtom";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
 
   /* color mode hook provided by chakra ui to toggle customised color mode */
   const {colorMode, toggleColorMode} = useColorMode();
   const [user, setUserData] = useRecoilState(userAtom);
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
       const response = await axios.post("/api/users/logout");
       console.log(response.data.message);
       localStorage.removeItem("user");
+      navigate("/login");
       setUserData(null);
     }
     catch(error) {

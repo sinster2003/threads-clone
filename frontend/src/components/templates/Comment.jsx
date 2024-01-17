@@ -1,5 +1,4 @@
-
-const Comment = () => {
+const Comment = ({onOpen}) => {
   return (
     <svg
         aria-label="Comment"
@@ -10,6 +9,7 @@ const Comment = () => {
         viewBox="0 0 24 24"
         width="20"
         cursor="pointer"
+        onClick={onOpen}
       >
         <title>Comment</title>
         <path

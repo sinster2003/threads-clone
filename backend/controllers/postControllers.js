@@ -78,7 +78,7 @@ const likeUnlikePost = async (req,res) => {
     const userWhoLikes = req.user;
     const userId = userWhoLikes._id.toString();
 
-    const post = await Post.findById(postId);
+    const post = await Post.findById(postId).select("-password").select("-updatedAt");
 
     if(!post) {
         return res.status(404).json({message: "Post not found"});
@@ -92,15 +92,19 @@ const likeUnlikePost = async (req,res) => {
             $pull: {likes: userId}
         });
 
-        return res.status(200).json({message: "Post unliked successfully"});
+        const user = await User.findById(userId).select("-password").select("-updatedAt");
+
+        return res.status(200).json({message: "Post unliked successfully", user});
     }
     else {
         // like the post
         await Post.updateOne({_id: postId}, {
             $push: {likes: userId}
         });
+
+        const user = await User.findById(userId);
         
-        return res.status(200).json({message: "Post liked successfully"});
+        return res.status(200).json({message: "Post liked successfully", user});
     }
 }
 
