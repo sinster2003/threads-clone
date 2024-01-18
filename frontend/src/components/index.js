@@ -18,3 +18,5 @@ export {default as AuthPassword} from "../components/authComponents/AuthPassword
 export {default as FollowBtn} from "../components/templates/FollowBtn";
 export {default as CreatePost} from "../components/CreatePost";
 export {default as ReplyModal} from "../components/templates/ReplyModal";
+export {default as Logout} from "../components/Logout";
+export {default as DatePost} from "../components/templates/DatePost";

@@ -16,10 +16,9 @@ const followUser = async (id, toast, setUserData, setLoading) => {
         })
     }
     catch(error) {
-        console.log(error);
         toast({
             title: "Error",
-            description: error?.response?.data?.message,
+            description: error?.response?.data?.error,
             status: "error",
             duration: 3000,
             isClosable: true

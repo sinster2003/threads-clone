@@ -72,7 +72,7 @@ const CreatePost = () => {
         img: imgUrl || ""
       };
       const response = await axios.post("/api/posts/create", postBody);
-      const result = response.data;
+      const result = await response.data;
       localStorage.setItem("user", JSON.stringify(result.user));
       setUserLoggedInData(result.user);
       handleCloseModal();
@@ -133,7 +133,7 @@ const CreatePost = () => {
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="red" mr={3} onClick={handleCloseModal}>
+            <Button colorScheme="red" mr={3} onClick={handleCloseModal} isDisabled={isLoading}>
               Cancel
             </Button>
             <Button variant="ghost" onClick={handlePostLogic} isLoading={isLoading}>Create Post</Button>

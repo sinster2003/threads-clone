@@ -14,7 +14,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const ReplyModal = ({post, userProfile, isOpen, onClose}) => {
+const ReplyModal = ({post, userProfile, isOpen, onClose, setPostDetails}) => {
   const [text, setText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
@@ -25,19 +25,27 @@ const ReplyModal = ({post, userProfile, isOpen, onClose}) => {
         setIsLoading(true);
         const response = await axios.put(`/api/posts/reply/${post._id}`,{text});
         const result = await response.data; 
+        if(setPostDetails) {
+          // concating the new reply to current replies
+          setPostDetails({...post, replies: post?.replies?.concat({
+            ...result.reply
+          })});
+        }
         toast({
             title: result.message,
             status: "success",
             duration: 3000,
             isClosable: true
         });
-        navigate(`/${userProfile.username}/post/${post._id}`);
+        setText("");
+        onClose();
+        navigate(`/${userProfile?.username || userProfile}/post/${post._id}`);
     }
     catch(error) {
-        console.log(error);
+      console.log(error);
     }
     finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
   }
 

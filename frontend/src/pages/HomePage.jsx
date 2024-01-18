@@ -5,12 +5,14 @@ import userAtom from "../atoms/userAtom";
 import { useRecoilValue } from "recoil";
 import axios from "axios";
 import { UserPost } from "../components";
+import likeAtom from "../atoms/likeAtom";
 
 const HomePage = () => {
   const userLoggedInData = useRecoilValue(userAtom);
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const likesState = useRecoilValue(likeAtom);
 
   useEffect(() => {
     if (!userLoggedInData) {
@@ -30,7 +32,7 @@ const HomePage = () => {
     };
 
     getFeed();
-  }, [userLoggedInData]);
+  }, [userLoggedInData, likesState]);
 
   return (
     <Flex

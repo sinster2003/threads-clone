@@ -1,14 +1,35 @@
-import { Box, Flex, Menu, MenuButton, MenuItem, MenuList, Text, Image, useColorMode, Avatar, Divider, Button, useToast } from '@chakra-ui/react';
-import { BsThreeDots } from 'react-icons/bs';
-import Actions from './Actions';
-import { useState } from 'react';
-import { Reply } from '.';
+import {
+  Box,
+  Flex,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Text,
+  Image,
+  useColorMode,
+  Avatar,
+  Divider,
+  Button,
+  useToast,
+  Spinner,
+} from "@chakra-ui/react";
+import { BsThreeDots } from "react-icons/bs";
+import Actions from "./Actions";
+import { DatePost, Reply } from ".";
+import { useRecoilState } from "recoil";
+import userAtom from "../atoms/userAtom";
+import handleDeletePost from "../utils/features/deletePost";
+import { Link, useNavigate } from "react-router-dom";
+import { MdOutlineDeleteOutline } from "react-icons/md";
+import { useState } from "react";
 
-const PostDetails = ({postDetails}) => {
-
-  const {colorMode} = useColorMode();
-  const [isLiked, setIsLiked] = useState(false);
+const PostDetails = ({ postDetails, onOpen }) => {
+  const { colorMode } = useColorMode();
   const toast = useToast();
+  const [userLoggedInData, setUserLoggedInData] = useRecoilState(userAtom);
+  const navigate = useNavigate();
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleCopyPost = () => {
     const currentPostLink = window.location.href;
@@ -26,72 +47,111 @@ const PostDetails = ({postDetails}) => {
 
   return (
     <Flex flexDirection="column" gap={4} mt="60px">
-          <Flex justifyContent="space-between" mb={2}>
-            <Flex alignItems="center" gap={1}>
-              <Avatar src={postDetails?.postedBy?.profilePic} size="md" mr={1.5} name={postDetails?.postedBy?.name}/>
-              <Text fontWeight="bold">{postDetails?.postedBy?.username}</Text>
-              <Image src="/verified.png" w={4} h={4} />
-            </Flex>
-            <Flex alignItems="center" gap={4}>
-              <Text color="gray.light">1d</Text>
-              <Box onClick={(e) => e.preventDefault()}>
-                <Menu>
-                  <MenuButton bg={colorMode === "dark" ? "gray.dark" :"gray.200"} p={2} borderRadius="50%">
-                    <BsThreeDots />
-                  </MenuButton>
-                  <MenuList bg={colorMode === "dark" ? "gray.dark" : "gray.200"}>
-                    <MenuItem
-                      bg={colorMode === "dark" ? "gray.dark" : "gray.200"}
-                      onClick={() => handleCopyPost()}
-                    >
-                      Copy Post Link
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
-              </Box>
-            </Flex>
-          </Flex>
-
-          <Flex flexDirection="column" gap={4}>
-            <Text
-              fontSize={{
-                base: "sm",
-                md: "md",
+      <Flex justifyContent="space-between" mb={2}>
+        <Flex alignItems="center" gap={1}>
+          <Avatar
+            src={postDetails?.postedBy?.profilePic}
+            size="md"
+            mr={1.5}
+            name={postDetails?.postedBy?.name}
+          />
+          <Link to={`/${postDetails?.postedBy?.username}`}><Text fontWeight="bold">{postDetails?.postedBy?.username}</Text></Link>
+          <Image src="/verified.png" w={4} h={4} />
+        </Flex>
+        <Flex alignItems="center" gap={4}>
+          <DatePost post={postDetails} />
+          {userLoggedInData?._id === postDetails?.postedBy?._id && (
+            <Box
+              onClick={async (e) => {
+                e.preventDefault();
+                setIsDeleting(true);
+                await handleDeletePost(
+                  postDetails?._id,
+                  userLoggedInData?.username,
+                  navigate,
+                  toast,
+                  setUserLoggedInData
+                );
+                setIsDeleting(false);
               }}
             >
-              {postDetails?.text}
-            </Text>
-            {<Image src={postDetails?.img} w={550} borderRadius={4} />}
-          </Flex>
+              { 
+                isDeleting ? 
+                <Spinner size='xs' /> :
+                <MdOutlineDeleteOutline size={20} />
+              }
+            </Box>
+          )}
+          <Box onClick={(e) => e.preventDefault()}>
+            <Menu>
+              <MenuButton
+                bg={colorMode === "dark" ? "gray.dark" : "gray.200"}
+                p={2}
+                borderRadius="50%"
+              >
+                <BsThreeDots />
+              </MenuButton>
+              <MenuList bg={colorMode === "dark" ? "gray.dark" : "gray.200"}>
+                <MenuItem
+                  bg={colorMode === "dark" ? "gray.dark" : "gray.200"}
+                  onClick={() => handleCopyPost()}
+                >
+                  Copy Post Link
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          </Box>
+        </Flex>
+      </Flex>
 
-          <Actions isLiked={isLiked} setIsLiked={setIsLiked}/>
+      <Flex flexDirection="column" gap={4}>
+        <Text
+          fontSize={{
+            base: "sm",
+            md: "md",
+          }}
+        >
+          {postDetails?.text}
+        </Text>
+        {<Image src={postDetails?.img} w={550} borderRadius={4} />}
+      </Flex>
 
-          <Flex gap={3} alignItems="center">
-            <Text color="gray.light">{postDetails?.replies?.length} replies</Text>
-            <Box w={1} h={1} bg="gray.light" borderRadius="full"></Box>
-            <Text color="gray.light">{postDetails?.likes?.length + (isLiked ? 1 : 0)} likes</Text>
-          </Flex>
+      <Actions post={postDetails} onOpen={onOpen} />
 
-          <Divider/>
+      <Flex gap={3} alignItems="center">
+        <Text color="gray.light">{postDetails?.replies?.length} replies</Text>
+        <Box w={1} h={1} bg="gray.light" borderRadius="full"></Box>
+        <Text color="gray.light">{postDetails?.likes?.length} likes</Text>
+      </Flex>
 
-          <Flex alignItems="center" justifyContent="space-between">
-            <Flex gap={4} alignItems="center">
-            <Text fontSize="2xl">👋</Text>
-            <Text color="gray.light">Get the app for like, reply and post</Text>
-            </Flex>
-            <Button>Get</Button>
-          </Flex>
-          <Text fontSize="lg" fontWeight="bold" mt={5}>Replies</Text>
-          {
-            postDetails?.replies?.length === 0 ? <Text fontSize="md" color="gray.light">No replies yet</Text>:postDetails?.replies?.map((reply, index) => <Reply key={index} comment={reply?.text} image={reply?.userProfilePic} username={reply?.username} likes={4}/>)
-          }
-          {/*
-          <Reply comment={"Cool Post"} image={"https://bit.ly/ryan-florence"} username={"ryan456"} likes={4}/>
-          <Reply comment={"This guy is an alien!!!"} image={"https://bit.ly/prosper-baba"} username={"propser"} likes={101}/>
-          <Reply comment={"When is your fight?"} image={"https://bit.ly/dan-abramov"} username={"dantheman"} likes={81}/>
-          */}
+      <Divider />
+
+      <Flex alignItems="center" justifyContent="space-between">
+        <Flex gap={4} alignItems="center">
+          <Text fontSize="2xl">👋</Text>
+          <Text color="gray.light">Get the app for like, reply and post</Text>
+        </Flex>
+        <Button>Get</Button>
+      </Flex>
+      <Text fontSize="lg" fontWeight="bold" mt={5}>
+        Replies
+      </Text>
+      {postDetails?.replies?.length === 0 ? (
+        <Text fontSize="md" color="gray.light">
+          No replies yet
+        </Text>
+      ) : (
+        postDetails?.replies?.map((reply, index) => (
+          <Reply
+            key={index}
+            comment={reply?.text}
+            image={reply?.userProfilePic}
+            username={reply?.username}
+          />
+        ))
+      )}
     </Flex>
-  )
-}
+  );
+};
 
 export default PostDetails;

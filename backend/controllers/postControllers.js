@@ -68,6 +68,15 @@ const deletePost = async (req,res) => {
         return res.status(401).json({message: "Unauthorized to delete the post"});
     }
 
+    if(postTobeDeleted.img) {
+        const imgId = postTobeDeleted.img?.split("/").pop().split(".")[0];
+        await cloudinary.uploader.destroy(imgId);
+    }
+
+    await User.findByIdAndUpdate(userWhoDeletes._id, {
+        $pull: {posts: postId}
+    });
+
     await Post.findByIdAndDelete(postId);
 
     res.status(200).json({message: "Post deleted successfully"});
@@ -132,7 +141,7 @@ const replyPost = async (req,res) => {
     await post.save();
 
     res.status(201).json({
-        message: "Reply added to the post successfully"
+        message: "Reply added to the post successfully", reply
     });
 }
 

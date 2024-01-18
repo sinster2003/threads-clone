@@ -44,7 +44,6 @@ const LoginPage = () => {
   }, [errors, user])
 
   const onSubmit = async (data) => {
-    console.log(data);
 
     const loginBody = {
       username: data.Username,

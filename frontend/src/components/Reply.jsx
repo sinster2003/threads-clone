@@ -3,8 +3,7 @@ import React, { useState } from "react";
 import PostHeader from "./templates/PostHeader";
 import { Actions } from ".";
 
-const Reply = ({comment, image, likes, username}) => {
-  const [isLiked, setIsLiked] = useState(false);
+const Reply = ({comment, image, username}) => {
 
   return (
     <Flex flexDirection="column">
@@ -15,10 +14,6 @@ const Reply = ({comment, image, likes, username}) => {
           base: "sm",
           lg: "md"
         }}>{comment}</Text>
-        <Actions isLiked={isLiked} setIsLiked={setIsLiked} />
-        <Flex gap={3} alignItems="center" mt={1}>
-          <Text color="gray.light">{likes + (isLiked ? 1 : 0)} likes</Text>
-        </Flex>
       </Flex>
     </Flex>
   );

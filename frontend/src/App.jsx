@@ -1,6 +1,6 @@
 import { Container } from "@chakra-ui/react";
 import { Outlet } from "react-router-dom";
-import { CreatePost, Layout } from "./components";
+import { CreatePost, Layout, Logout } from "./components";
 import userAtom from "./atoms/userAtom";
 import { useRecoilValue } from "recoil";
 
@@ -8,6 +8,7 @@ const App = () => {
   const userLoggedIn = useRecoilValue(userAtom);
   return (
     <>
+    {userLoggedIn ? <Logout/>: null} 
     <Container minH="100vh" maxW={{
       base: "md",
       sm: "lg",
@@ -17,7 +18,8 @@ const App = () => {
         <Outlet/>
       </Layout>
     </Container>
-      {userLoggedIn ? <CreatePost/>: null}
+    {/* if user logged only then creates post button */}
+    {userLoggedIn ? <CreatePost/>: null} 
     </>
   )
 }
