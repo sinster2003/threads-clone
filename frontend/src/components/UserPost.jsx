@@ -17,10 +17,11 @@ import {
 import { Actions, DatePost, ReplyModal } from "./";
 import { BsThreeDots } from "react-icons/bs";
 import { MdOutlineDeleteOutline } from "react-icons/md";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import userAtom from "../atoms/userAtom";
 import handleDeletePost from "../utils/features/deletePost";
 import { useState } from "react";
+import likesAtomFamily from "../atoms/likesAtom";
 
 const UserPost = ({ post, userProfile, home }) => {
   const toast = useToast();
@@ -29,6 +30,7 @@ const UserPost = ({ post, userProfile, home }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [userLoggedInData, setUserLoggedInData] = useRecoilState(userAtom);
   const [isDeleting, setIsDeleting] = useState(false);
+  const likesLength = useRecoilValue(likesAtomFamily(post._id));
 
   const handleCopyPost = (link) => {
     console.log(link);
@@ -182,7 +184,7 @@ const UserPost = ({ post, userProfile, home }) => {
             <Flex mb={8} gap={3} alignItems="center">
               <Text color="gray.light">{post?.replies?.length} replies</Text>
               <Box w={1} h={1} bg="gray.light" borderRadius="full"></Box>
-              <Text color="gray.light">{post?.likes?.length} likes</Text>
+              <Text color="gray.light">{likesLength} likes</Text>
             </Flex>
           </Flex>
         </Flex>

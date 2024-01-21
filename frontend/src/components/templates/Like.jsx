@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import userAtom from "../../atoms/userAtom";
 import axios from "axios";
 import { useToast } from "@chakra-ui/react";
-import likeAtom from "../../atoms/likeAtom";
+import likesAtomFamily from "../../atoms/likesAtom";
 
 const Like = ({ post }) => {
   const userLoggedInData = useRecoilValue(userAtom);
-  const [likes, setLikes] = useRecoilState(likeAtom);
+  const setLikesLength = useSetRecoilState(likesAtomFamily(post._id));
   const [isLiked, setIsLiked] = useState(
     post?.likes?.includes(userLoggedInData?._id)
   );
@@ -23,8 +23,8 @@ const Like = ({ post }) => {
       const response = await axios.put(`/api/posts/like/${post?._id}`);
       const result = await response.data;
       isLiked
-        ? setLikes(likes.filter((like) => like !== post?._id))
-        : setLikes([...likes, post?._id]);
+        ? setLikesLength(prevLength => prevLength - 1)
+        : setLikesLength(prevLength => prevLength + 1);
       setIsLiked(!isLiked);
       toast({
         title: `${result.message}`,

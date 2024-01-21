@@ -17,12 +17,13 @@ import {
 import { BsThreeDots } from "react-icons/bs";
 import Actions from "./Actions";
 import { DatePost, Reply } from ".";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom";
 import handleDeletePost from "../utils/features/deletePost";
 import { Link, useNavigate } from "react-router-dom";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { useState } from "react";
+import likesAtomFamily from "../atoms/likesAtom";
 
 const PostDetails = ({ postDetails, onOpen }) => {
   const { colorMode } = useColorMode();
@@ -30,6 +31,7 @@ const PostDetails = ({ postDetails, onOpen }) => {
   const [userLoggedInData, setUserLoggedInData] = useRecoilState(userAtom);
   const navigate = useNavigate();
   const [isDeleting, setIsDeleting] = useState(false);
+  const likesLength = useRecoilValue(likesAtomFamily(postDetails._id)); 
 
   const handleCopyPost = () => {
     const currentPostLink = window.location.href;
@@ -74,6 +76,7 @@ const PostDetails = ({ postDetails, onOpen }) => {
                 );
                 setIsDeleting(false);
               }}
+              cursor="pointer"
             >
               { 
                 isDeleting ? 
@@ -121,7 +124,7 @@ const PostDetails = ({ postDetails, onOpen }) => {
       <Flex gap={3} alignItems="center">
         <Text color="gray.light">{postDetails?.replies?.length} replies</Text>
         <Box w={1} h={1} bg="gray.light" borderRadius="full"></Box>
-        <Text color="gray.light">{postDetails?.likes?.length} likes</Text>
+        <Text color="gray.light">{likesLength} likes</Text>
       </Flex>
 
       <Divider />

@@ -5,7 +5,6 @@ import axios from "axios";
 import { useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom";
 import { Box, Button, Flex, Spinner, Text, useToast } from "@chakra-ui/react";
-import likeAtom from "../atoms/likeAtom";
 
 const UserPage = () => {
   const { username } = useParams();
@@ -13,7 +12,6 @@ const UserPage = () => {
   const user = useRecoilValue(userAtom);
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(true);
-  const likesState = useRecoilValue(likeAtom);
 
   useEffect(() => {
     axios.get(`/api/users/profile/${username}`)
@@ -32,7 +30,7 @@ const UserPage = () => {
       setUserProfile(null);
     })
     .finally(() => setIsLoading(false))
-  }, [user, likesState]); // when user logged in posts or data updates the user page must rerender
+  }, [user]); // when user logged in posts or data updates the user page must rerender
 
   if(isLoading) {
     return (

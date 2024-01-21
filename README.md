@@ -13,10 +13,10 @@
 - Delete Posts
 - Reply To a Post
 - Like/Unlike a Post
-
-## Yet To be Done
 - Optimize likesCount in frontend
 - Search Bar for usernames
+
+## Yet To be Done
 - loading optimized
 - rendering optmized
 - profile updating useForm 

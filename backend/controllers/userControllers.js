@@ -215,11 +215,38 @@ const getUserProfile = async (req,res) => {
   res.status(200).json(getUser);
 }
 
+const searchUser = async (req,res) => {
+  console.log("hi")
+  const usernameQuery = req.query.filter;
+
+  if(!usernameQuery) {
+    return res.status(200).json([]);
+  }
+
+  const users = await User.find({
+    $or: [
+      {
+        username: { 
+          $regex: usernameQuery // if username includes the regex query
+        }
+      },
+      {
+        name: {
+          $regex: usernameQuery // if username includes the regex query
+        }
+      }
+    ]
+  }).select("-password");
+  
+  return res.status(200).json(users);
+}
+
 module.exports = {
   signupUser,
   loginUser,
   logoutUser,
   followUnfollowUser,
   updateUser,
-  getUserProfile
+  getUserProfile,
+  searchUser
 };
