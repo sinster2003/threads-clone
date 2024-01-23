@@ -28,7 +28,7 @@ const HomePage = () => {
         const feedPosts = await response.data;
         setPosts(feedPosts);
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
       } finally {
         setIsLoading(false);
       }

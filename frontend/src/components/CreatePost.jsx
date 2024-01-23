@@ -71,7 +71,7 @@ const CreatePost = () => {
         text: textArea,
         img: imgUrl || ""
       };
-      const response = await axios.post("/api/posts/create", postBody);
+      const response = await axios.post("/api/posts/create", postBody, { withCredentials: true });
       const result = await response.data;
       localStorage.setItem("user", JSON.stringify(result.user));
       setUserLoggedInData(result.user);
@@ -102,7 +102,7 @@ const CreatePost = () => {
       <Button
         leftIcon={<AddIcon />}
         position="fixed"
-        top={640}
+        bottom={18}
         right={18}
         onClick={onOpen}
         colorScheme='twitter' 

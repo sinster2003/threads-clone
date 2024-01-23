@@ -3,7 +3,7 @@ import axios from "axios";
 const handleDeletePost = async (postId, username, navigate, toast, setUserLoggedIn) => {
     try {
       if(!window.confirm("Are you want to delete this post?")) return;
-      const response = await axios.delete(`/api/posts/delete/${postId}`);
+      const response = await axios.delete(`/api/posts/delete/${postId}`, { withCredentials: true });
       const result = await response.data;
       if(result?.error) {
         console.log(result?.error);

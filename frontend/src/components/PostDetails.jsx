@@ -58,7 +58,6 @@ const PostDetails = ({ postDetails, onOpen }) => {
             name={postDetails?.postedBy?.name}
           />
           <Link to={`/${postDetails?.postedBy?.username}`}><Text fontWeight="bold">{postDetails?.postedBy?.username}</Text></Link>
-          {(userProfile?.followers?.length >= 25) && <Image src="/verified.png" w={4} h={4} />}
         </Flex>
         <Flex alignItems="center" gap={4}>
           <DatePost post={postDetails} />
