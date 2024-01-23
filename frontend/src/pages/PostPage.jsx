@@ -17,6 +17,7 @@ const PostPage = () => {
     .catch(error => {
       toast({ 
         title: `${error?.response?.data?.error || error?.response?.data?.message}`,
+        description: error,
         status: "error",
         duration: 3000,
         isClosable: true
