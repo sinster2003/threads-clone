@@ -1,4 +1,4 @@
-import { Container } from "@chakra-ui/react";
+import { Container, useMediaQuery } from "@chakra-ui/react";
 import { Outlet } from "react-router-dom";
 import { CreatePost, Layout, Logout } from "./components";
 import userAtom from "./atoms/userAtom";
@@ -6,9 +6,11 @@ import { useRecoilValue } from "recoil";
 
 const App = () => {
   const userLoggedIn = useRecoilValue(userAtom);
+  const [isSmallerThan700] = useMediaQuery('(max-width: 700px)');
+
   return (
     <>
-    {userLoggedIn ? <Logout/>: null} 
+    {(userLoggedIn && !isSmallerThan700) ? <Logout/>: null} 
     <Container minH="100vh" maxW={{
       base: "md",
       sm: "lg",

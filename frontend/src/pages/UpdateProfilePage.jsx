@@ -57,10 +57,17 @@ const UpdateProfilePage = () => {
         isClosable: true,
         status: "success"
       })
-      setIsLoading(false);
     }
     catch(error) {
-      console.log(error);
+      toast({
+        title: error?.response?.data?.error,
+        duration: 3000,
+        isClosable: true,
+        status: "error"
+      })
+    }
+    finally {
+      setIsLoading(false);
     }
   }
 
@@ -109,7 +116,7 @@ const UpdateProfilePage = () => {
             />
           </FormControl>
           <FormControl id="userName">
-            <FormLabel>User name</FormLabel>
+            <FormLabel>Username</FormLabel>
             <Input
               placeholder="UserName"
               _placeholder={{ color: "gray.500" }}
@@ -169,6 +176,7 @@ const UpdateProfilePage = () => {
               bg: "red.500",
             }}
             onClick={() => navigate("/")}
+            isDisabled={isLoading}
           >
             Cancel
           </Button>

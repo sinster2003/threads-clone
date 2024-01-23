@@ -1,8 +1,8 @@
 const User = require("../models/users");
+const Post = require("../models/posts");
 const bcrypt = require("bcrypt");
 const generateToken = require("../utils/generateToken");
-const jwt = require("jsonwebtoken");
-const { signupObject, loginObject } = require("../utils/types/zod");
+const { signupObject, loginObject, updateProfileObject } = require("../utils/types/zod");
 const { v2 : cloudinary } = require("cloudinary");
 
 const signupUser = async (req, res) => {
@@ -125,11 +125,11 @@ const followUnfollowUser = async (req, res) => {
     // unfollow user
     await User.findByIdAndUpdate(userWhoFollows._id.toString(), {
       $pull: { following: id },
-    }); // user who follows
+    }, {new: true, runValidators: true, context: "query"}); // user who follows
 
     await User.findByIdAndUpdate(id, {
       $pull: { followers: userWhoFollows._id.toString() },
-    }); // followed user
+    }, {new: true, runValidators: true, context: "query"}); // followed user
 
     const user = await User.findById(userWhoFollows._id.toString()).select("-password");
 
@@ -141,11 +141,11 @@ const followUnfollowUser = async (req, res) => {
     // follow user
     await User.findByIdAndUpdate(userWhoFollows._id.toString(), {
       $push: { following: id },
-    });
+    }, {new: true, runValidators: true, context: "query"});
 
     await User.findByIdAndUpdate(id, {
       $push: { followers: userWhoFollows._id.toString() },
-    });
+    }, {new: true, runValidators: true, context: "query"});
 
     const user = await User.findById(userWhoFollows._id.toString()).select("-password");
 
@@ -160,6 +160,16 @@ const updateUser = async (req,res) => {
   const userTobeUpdated = req.user;
   const { name, username, email, password, bio } = req.body;
   let { profilePic } = req.body;
+
+  // input validation
+  updateProfileObject.parse({
+    name,
+    username,
+    email,
+    password,
+    bio,
+    profilePic
+  })
 
   const userId = userTobeUpdated?._id.toString();
 
@@ -199,6 +209,31 @@ const updateUser = async (req,res) => {
 
   user.password = null; // for frontend security
 
+  const posts = await Post.find({});
+
+  /* 
+    Promise.all waits for all the promises to fulfill and get resolved
+    since each callback returns returns promises or asynchronous results
+  */
+
+  await Promise.all(posts?.map(async (post) => {
+    const replies = post?.replies?.map(reply => {
+      if(reply?.userId?.toString() === userId) {
+        const newReply = {
+          ...reply,
+          userProfilePic: user.profilePic,
+          username: user.username
+        }
+        return newReply;
+      }
+      else {
+        return reply;
+      }
+    })
+    post.replies = replies; // new replies of logged-in user in case of profile update
+    await post.save(); 
+  }));
+
   res.status(200).json(user);
 }
 
@@ -216,11 +251,10 @@ const getUserProfile = async (req,res) => {
 }
 
 const searchUser = async (req,res) => {
-  console.log("hi")
   const usernameQuery = req.query.filter;
 
   if(!usernameQuery) {
-    return res.status(200).json([]);
+    return res.status(200).json([]); // empty array ---> no users
   }
 
   const users = await User.find({

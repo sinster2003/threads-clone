@@ -17,7 +17,7 @@ import {
 import { Actions, DatePost, ReplyModal } from "./";
 import { BsThreeDots } from "react-icons/bs";
 import { MdOutlineDeleteOutline } from "react-icons/md";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom";
 import handleDeletePost from "../utils/features/deletePost";
 import { useState } from "react";
@@ -61,7 +61,7 @@ const UserPost = ({ post, userProfile, home }) => {
               size="md"
               src={userProfile?.profilePic}
             />
-            <Box h="full" w={0.001} bg="gray.500" my={6}></Box>
+            <Box h="full" w={{base: 0.003, sm: 0.001}} bg="gray.500" my={6}></Box>
             <Flex
               flexDirection="row"
               flexWrap="wrap"
@@ -115,7 +115,7 @@ const UserPost = ({ post, userProfile, home }) => {
                 >
                   {userProfile?.username}
                 </Text>
-                <Image src="/verified.png" w={4} h={4} />
+                {(userProfile?.followers?.length >= 25) && <Image src="/verified.png" w={4} h={4} />}
               </Flex>
               <Flex alignItems="center" gap={4}>
                 <DatePost post={post} />
@@ -178,7 +178,7 @@ const UserPost = ({ post, userProfile, home }) => {
               >
                 {post?.text}
               </Text>
-              {post?.img && <Image src={post?.img} borderRadius={4} w={440} loading="lazy"/>}
+              {post?.img && <Image loading="lazy" src={post?.img} borderRadius={4} w={440} />}
             </Flex>
             <Actions post={post} onOpen={onOpen} />
             <Flex mb={8} gap={3} alignItems="center">

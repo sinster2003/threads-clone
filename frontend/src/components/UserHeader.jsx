@@ -17,7 +17,7 @@ import {
 import FollowBtn from "./templates/FollowBtn";
 import { useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { BsInstagram } from "react-icons/bs";
 import { CgMoreO } from "react-icons/cg";
 import { useEffect, useState } from "react";
@@ -27,6 +27,7 @@ const UserHeader = ({ userProfile }) => {
   const { colorMode } = useColorMode();
   const userLoggedIn = useRecoilValue(userAtom);
   const [followersCount, setFollowersCount] = useState(0);
+  const { username } = useParams();
 
   // userProfile data takes time to render so if changing the state it would undefined initially
   useEffect(() => {
@@ -92,7 +93,7 @@ const UserHeader = ({ userProfile }) => {
             {followersCount} follower(s)
           </Text>
           <Box w={1} h={1} bg="gray.light" borderRadius="full"></Box>
-          <Link to="https://instagram.com" target="_blank">
+          <Link to={`https://instagram.com/${username}/`} target="_blank">
             <Text color="gray.light" _hover={{ textDecoration: "underline" }}>
               instagram.com
             </Text>

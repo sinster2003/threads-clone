@@ -101,10 +101,12 @@ const CreatePost = () => {
     <>
       <Button
         leftIcon={<AddIcon />}
-        position="absolute"
-        bottom={18}
+        position="fixed"
+        top={640}
         right={18}
         onClick={onOpen}
+        colorScheme='twitter' 
+        variant='solid'
       >
         Post
       </Button>

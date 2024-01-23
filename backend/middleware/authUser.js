@@ -5,7 +5,6 @@ const User = require("../models/users");
 const authUser = async (req, res, next) => {
   /* verify the token and authorize the user if token valid */
     const cookie = req.cookies;
-    console.log("accessing cookie", cookie.jwt);
     const user = jwt.verify(cookie.jwt, JWT_SECRET);
 
     // select without password

@@ -1,6 +1,5 @@
-## features
+## Highlight Features
 
-### Done
 - Authentication and Authorization with JWT
 - Update User Profile
 - Follow/Unfollow Users
@@ -15,9 +14,6 @@
 - Like/Unlike a Post
 - Optimize likesCount in frontend
 - Search Bar for usernames
-
-## Yet To be Done
-- loading optimized
-- rendering optmized
-- profile updating useForm 
+- rendering optimized
+- updating replies
 - Light Mode and Mobile responsive

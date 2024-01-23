@@ -23,4 +23,13 @@ const createPostObject = zod.object({
 
 createPostObject.required();
 
-module.exports = { loginObject, signupObject, createPostObject };
+const updateProfileObject = zod.object({
+  name: zod.string(),
+  username: zod.string().min(2),
+  email: zod.string().email(),
+  password: zod.string().min(6).optional().or(zod.literal("")),
+  bio: zod.string(),
+  profilePic: zod.string()
+});
+
+module.exports = { loginObject, signupObject, createPostObject, updateProfileObject };

@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Flex, IconButton, Input, ListItem, Menu, MenuItem, MenuList, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Spinner, Text, UnorderedList, useDisclosure } from "@chakra-ui/react";
+import { Avatar, Box, Button, Flex, IconButton, Input, ListItem, Image, Menu, MenuItem, MenuList, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Spinner, Text, UnorderedList, useDisclosure, useMediaQuery } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import userAtom from "../atoms/userAtom";
@@ -15,6 +15,7 @@ const HomePage = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [currentTimeout, setCurrentTimout] = useState("");
   const {isOpen, onOpen, onClose} = useDisclosure();
+  const [isSmallerThan700] = useMediaQuery('(max-width: 700px)');
 
   useEffect(() => {
     if (!userLoggedInData) {
@@ -54,8 +55,6 @@ const HomePage = () => {
     setCurrentTimout(previousTimeout);
   }
 
-  console.log(searchResults);
-
   return (
     <Flex
       flexDirection="column"
@@ -85,6 +84,7 @@ const HomePage = () => {
                   <Flex alignItems="center" gap={2}>
                     <Avatar src={result?.profilePic}/>
                     <Text>{result?.username}</Text>
+                    {(result?.followers?.length >= 25) && <Image src={"/verified.png"} w={4} h={4}/>}
                   </Flex>
                 </ListItem>
               </Link>)
@@ -96,6 +96,8 @@ const HomePage = () => {
           </ModalContent>
         </Modal>
       </Flex>
+
+      {isSmallerThan700 && <Link to={`/${userLoggedInData?.username}`}><Button my={4} fontSize="sm">Visit Profile</Button></Link>}
       
       {isLoading && (
         <Flex justifyContent="center" alignItems="center" my={10}>
@@ -115,6 +117,7 @@ const HomePage = () => {
         </Text>
       )}
 
+    <Box w="full">
       {!isLoading &&
         posts?.map((post) => (
           <UserPost
@@ -124,6 +127,7 @@ const HomePage = () => {
             home="home"
           />
         ))}
+      </Box>
     </Flex>
   );
 };

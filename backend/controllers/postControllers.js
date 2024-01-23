@@ -47,7 +47,7 @@ const createPost = async (req,res) => {
 
     await User.findByIdAndUpdate(postedBy, {
         $push: {posts: savedPost._id}
-    })
+    }, {new: true, runValidators: true, context: "query"})
 
     const user = await User.findById(postedBy);
 
@@ -75,7 +75,7 @@ const deletePost = async (req,res) => {
 
     await User.findByIdAndUpdate(userWhoDeletes._id, {
         $pull: {posts: postId}
-    });
+    }, {new: true, runValidators: true, context: "query"});
 
     await Post.findByIdAndDelete(postId);
 

@@ -30,7 +30,7 @@ const UserPage = () => {
       setUserProfile(null);
     })
     .finally(() => setIsLoading(false))
-  }, [user]); // when user logged in posts or data updates the user page must rerender
+  }, [user, username]); // when user logged in posts or data updates the user page must rerender
 
   if(isLoading) {
     return (

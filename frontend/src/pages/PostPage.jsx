@@ -2,17 +2,26 @@ import { useEffect, useState } from "react";
 import { PostDetails, ReplyModal } from "../components";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { Flex, Spinner, useDisclosure } from "@chakra-ui/react";
+import { Flex, Spinner, useDisclosure, useToast } from "@chakra-ui/react";
 
 const PostPage = () => {
   const { pid, username } = useParams();
   const [postDetails, setPostDetails] = useState(null);
   const { onOpen, isOpen, onClose} = useDisclosure();
+  const toast = useToast();
 
   useEffect(() => {
     axios.get(`http://localhost:3001/api/posts/${pid}`)
     .then(response => response.data)
     .then(result => setPostDetails(result))
+    .catch(error => {
+      toast({ 
+        title: `${error?.response?.data?.error || error?.response?.data?.message}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true
+      })
+    })
   }, [pid]);
 
   if(!postDetails) {

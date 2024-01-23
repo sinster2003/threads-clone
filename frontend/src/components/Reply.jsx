@@ -1,7 +1,5 @@
-import { Box, Divider, Flex, Text } from "@chakra-ui/react";
-import React, { useState } from "react";
+import { Divider, Flex, Text } from "@chakra-ui/react";
 import PostHeader from "./templates/PostHeader";
-import { Actions } from ".";
 
 const Reply = ({comment, image, username}) => {
 

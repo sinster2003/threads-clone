@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import userAtom from "../../atoms/userAtom";
 import axios from "axios";
-import { useToast } from "@chakra-ui/react";
+import { useColorModeValue, useToast } from "@chakra-ui/react";
 import likesAtomFamily from "../../atoms/likesAtom";
 
 const Like = ({ post }) => {
@@ -46,7 +46,7 @@ const Like = ({ post }) => {
   return (
     <svg
       aria-label="Like"
-      color={isLiked ? "rgb(237, 73, 86)" : "white"}
+      color={isLiked ? "rgb(237, 73, 86)" : useColorModeValue("rgba(0, 0, 0, 0.92)", "white")}
       fill={isLiked ? "rgb(237, 73, 86)" : "transparent"}
       height="19"
       role="img"

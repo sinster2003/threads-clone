@@ -13,8 +13,6 @@ const generateToken = (userId, res) => {
         sameSite: "Strict"
     });
 
-    console.log("Cookie", res.cookie);
-
     return token;
 }
 
