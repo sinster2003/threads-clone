@@ -11,7 +11,7 @@ const PostPage = () => {
   const toast = useToast();
 
   useEffect(() => {
-    axios.get(`http://localhost:3001/api/posts/${pid}`)
+    axios.get(`/api/posts/${pid}`)
     .then(response => response.data)
     .then(result => setPostDetails(result))
     .catch(error => {

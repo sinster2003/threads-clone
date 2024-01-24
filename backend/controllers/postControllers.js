@@ -8,6 +8,10 @@ const getPost = async (req,res) => {
 
     const post = await Post.findById(postId).populate("postedBy");
 
+    if(!post) {
+        return res.status(404).json({message: "Post not found"})
+    }
+
     res.status(200).json(post);
 }
 
@@ -154,6 +158,10 @@ const feedPost = async (req,res) => {
     }
 
     const posts = await Post.find({postedBy: {$in: user.following}}).sort({createdAt: -1}).populate("postedBy");
+
+    if(!posts) {
+        return res.status(404).json({message: "Posts not found"});
+    }
 
     res.status(200).json(posts);
 }
